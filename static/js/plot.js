@@ -1,7 +1,7 @@
 var select = document.getElementById("samples");
 select.length = 0;
 
-var names_url = "http://127.0.0.1:5000/names"
+var names_url = "/names"
 
 var defaultOption = document.createElement('option');
 defaultOption.text = 'Sample Names';
@@ -23,7 +23,7 @@ Plotly.d3.json(names_url, function(error, response){
 function optionChanged() {
     var selection = document.getElementById('samples');
     var selValue = selection.value;
-    var sample_url = "http://127.0.0.1:5000/samples/" + selValue;
+    var sample_url = "/samples/" + selValue;
     Plotly.d3.json(sample_url, function(error, response){
         if (error) return console.warn(error);
         var otus = response[0]["otu_ids"];
@@ -45,7 +45,7 @@ function optionChanged() {
     var selection = document.getElementById('samples');
     var selValue = selection.value;
     var metaList = document.getElementById('metadataList');
-    var meta_url = "http://127.0.0.1:5000/metadata/" + selValue;
+    var meta_url = "/metadata/" + selValue;
     Plotly.d3.json(meta_url, function(error, response){
     if (error) return console.warn.apply(error);
     var data = Object.entries(response[0]);
@@ -60,7 +60,7 @@ function optionChanged() {
 function createBubble() {
     var selection = document.getElementById('samples');
     var selValue = selection.value;
-    var sample_url = "http://127.0.0.1:5000/samples/" + selValue;
+    var sample_url = "/samples/" + selValue;
     Plotly.d3.json(sample_url, function(error, response){
         if (error) return console.warn(error);
         var otus = response[0]["otu_ids"];
