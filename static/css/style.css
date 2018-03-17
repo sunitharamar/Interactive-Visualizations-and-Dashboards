@@ -1,0 +1,67 @@
+#plots{
+    display: inline-block;
+    height: auto;
+    position: relative;
+}
+#smTitle {
+    margin-top:25px;
+    border:2px;
+    border-radius:4px;
+    background-color:darkblue;
+    color:aliceblue;
+    text-align: center;
+}
+.svg-container {
+    height:500px;
+}
+#dropdown{
+    margin-left:0px;
+}
+#list{
+    background-color: aliceblue;
+    color:black;
+    text-align: left;
+}
+#header {
+    text-align:center;
+}
+
+header {
+    padding: 5px;
+    margin-bottom: 10px;
+    margin-left: 80px;
+    margin-right: 80px;
+    color: black;
+    background: lightgray;
+    width: 80%; 
+}
+
+.belly_button {
+    color: black;
+    font-weight: 800;
+}
+
+h2 {
+    font-weight: bold;
+}
+
+.featured {
+    height: auto;
+    width: 100%;
+    float: left;
+}
+
+.border {
+    border-width: 1px;
+    border-color: lightgray;
+}
+
+.hemispheres {
+    text-align: center;
+}
+
+.caption {
+    font-size: 25px;
+    text-align: center;
+    font-weight: bold;   
+}

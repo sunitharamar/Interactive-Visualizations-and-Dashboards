@@ -1,0 +1,231 @@
+import sqlalchemy
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+from sqlalchemy import MetaData
+
+import pandas as pd
+from flask import Flask, render_template, jsonify
+from flask_sqlalchemy import SQLAlchemy
+
+# pip install sqlalchemy <-- does not work
+#conda install -c conda-forge flask-sqlalchemy <-- this works
+
+
+#################################################
+# Flask Setup
+#################################################
+app = Flask(__name__)
+
+#################################################
+# Database Setup
+#################################################
+
+# The database URI
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db/belly_button_biodiversity.sqlite"
+
+db = SQLAlchemy(app)
+
+engine = create_engine("sqlite:///db/belly_button_biodiversity.sqlite")
+Base = automap_base()
+Base.prepare(engine, reflect=True)
+Otu = Base.classes.otu
+Sm = Base.classes.samples_metadata
+Sa = Base.classes.samples
+
+# Create a session
+session = Session(engine)
+print(session)
+
+# Create a MetaData instance
+metadata = MetaData()
+
+# reflect db schema to MetaData
+metadata.reflect(bind=engine)
+
+#################################################
+# Flask Routes
+#################################################
+
+@app.route("/")
+def home():
+    """Return the dashboard homepage."""
+    return render_template("index.html") 
+
+ 
+@app.route('/names')
+def names():
+    """List of sample names.
+
+    Returns a list of sample names in the format
+    [
+        "BB_940",
+        "BB_941",
+        "BB_943",
+        "BB_944",
+        "BB_945",
+        "BB_946",
+        "BB_947",
+        ...
+    ]"""
+ 
+    # List of names
+    sample_names = metadata.tables['samples'].columns.keys()
+    names = sample_names[1:len(sample_names)]
+    #print(names)
+    #df = pd.Series( (name[0:] for name in names) )
+    return jsonify(names)
+
+    
+@app.route('/otu')
+def otu():
+    """List of OTU descriptions.
+
+    Returns a list of OTU descriptions in the following format
+
+    [
+        "Archaea;Euryarchaeota;Halobacteria;Halobacteriales;Halobacteriaceae;Halococcus",
+        "Archaea;Euryarchaeota;Halobacteria;Halobacteriales;Halobacteriaceae;Halococcus",
+        "Bacteria",
+        "Bacteria",
+        "Bacteria",
+        ...
+    ]"""
+    
+    results = db.session.query(Otu.otu_id, Otu.lowest_taxonomic_unit_found).\
+        order_by(Otu.otu_id).all()
+        #limit(10).all()
+ 
+    otuid = [row[0] for row in results]
+    description = [row[1] for row in results]
+ 
+    return jsonify({"names":description})
+
+
+@app.route('/metadata/', defaults={'sample': None})
+@app.route('/metadata/<sample>')
+def return_metadata_sample(sample):
+    """MetaData for a given sample.
+
+    Args: Sample in the format: `BB_940`
+
+    Returns a json dictionary of sample metadata in the format
+
+    {
+        AGE: 24,
+        BBTYPE: "I",
+        ETHNICITY: "Caucasian",
+        GENDER: "F",
+        LOCATION: "Beaufort/NC",
+        SAMPLEID: 940
+    }
+    """
+    if sample is None:
+        return "Please provide a sample in the format: `BB_940` at the end of the URL (e.g. /metadata/BB_940)"
+
+    number =  sample # got input value ex: "BB_940"
+    a,b = number.split("_")
+    metasamples_data = db.session.query(Sa.otu_id,Sm.AGE,Sm.BBTYPE,Sm.ETHNICITY,Sm.GENDER,Sm.LOCATION,Sm.SAMPLEID).\
+                                        filter(Sa.otu_id == Sm.SAMPLEID).\
+                                        filter(Sa.otu_id == b) # filtering the exact sample 
+
+     
+    for metas in metasamples_data: 
+        sample_data_dict = {
+            'AGE': metas.AGE,
+            'BBTYPE': metas.BBTYPE,
+            'ETHNICITY': metas.ETHNICITY,
+            'GENDER': metas.GENDER,
+            'LOCATION': metas.LOCATION,
+            'SAMPLEID': metas.SAMPLEID
+            }
+
+    return jsonify(sample_data_dict)
+
+
+@app.route('/wfreq/', defaults={'sample': None})
+@app.route('/wfreq/<sample>')
+def return_wash_freq_sample(sample):
+    """Weekly Washing Frequency as a number.
+
+    Args: Sample in the format: `BB_940`
+
+    Returns an integer value for the weekly washing frequency `WFREQ`
+    """
+    if sample is None:
+        return "Please provide a sample in the format: `BB_940` at the end of the URL (e.g. /metadata/BB_940)"
+
+    number =  sample # got input value ex: "BB_940"
+    a,b = number.split("_")
+    metasamples_freq = db.session.query(Sa.otu_id,Sm.WFREQ,Sm.SAMPLEID).\
+                                        filter(Sa.otu_id == Sm.SAMPLEID).\
+                                        filter(Sa.otu_id == b) # filtering the exact washing frequency sample 
+
+     
+    for freq in metasamples_freq: 
+        sample_weekfreq_dict = {
+            'WFREQ': freq.WFREQ
+            }
+
+    return jsonify(sample_weekfreq_dict)
+    
+
+@app.route('/samples/', defaults={'sample': None})
+@app.route('/samples/<sample>')
+def return_sort_otuid_sample_value(sample):
+ 
+    """OTU IDs and Sample Values for a given sample.
+
+    Sort your Pandas DataFrame (OTU ID and Sample Value)
+    in Descending Order by Sample Value
+
+    Return a list of dictionaries containing sorted lists  for `otu_ids`
+    and `sample_values`
+
+    [
+        {
+            otu_ids: [
+                1166,
+                2858,
+                481,
+                ...
+            ],
+            sample_values: [
+                163,
+                126,
+                113,
+                ...
+            ]
+        }
+    ]
+    """
+    # Create a reference the CSV belly_button samples table .csv
+    samples_csv_path = "DataSets/belly_button_biodiversity_samples.csv"
+
+   # Read the schools CSV into a Pandas DataFrame
+    belly_samples_df = pd.read_csv(samples_csv_path)
+    belly_samples_df.head()
+
+    sample_df = belly_samples_df[(belly_samples_df[sample] > 0.0)]
+    sample_sort_df = sample_df.sort_values(by = sample, ascending=False)
+
+    sample_data = [{
+        "otu_ids": sample_sort_df[sample].index.values.tolist(),
+        "sample_values": sample_sort_df[sample].values.tolist()
+    }]
+    sample_data_df = pd.DataFrame(sample_data)
+    final_sample = sample_data_df.to_json(orient='records')
+    return final_sample 
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5001) 
+
+
+
+
+
+
+
+
+
+
