@@ -20,6 +20,8 @@ Plotly.d3.json(names_url, function(error, response){
         select.appendChild(el);
 }});
 
+
+
 function optionChanged() {
     var selection = document.getElementById('samples');
     var selValue = selection.value;
@@ -40,6 +42,7 @@ function optionChanged() {
         Plotly.newPlot('plots',data, layout);
     })
 }
+
 
  function findMetadata() {
     var selection = document.getElementById('samples');
