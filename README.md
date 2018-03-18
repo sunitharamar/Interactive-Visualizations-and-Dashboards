@@ -88,9 +88,13 @@ Next, create the following routes for your api.
         }
     ]
     """
+<<<<<<< HEAD
 
 Step 2 - Plotly.js
 
+=======
+Step 2 - Plotly.js
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
 Use Plotly.js to build interactive charts for your dashboard.
 
 Use the route /names to populate a dropdown select element with the list of sample names.
@@ -100,9 +104,12 @@ Use the following HTML tag for the dropdown selector
   <select id="selDataset" onchange="optionChanged(this.value)"></select>
 Create a function called optionChanged to handle the change event when a new sample is selected (i.e. fetch data for the newly selected sample).
 dropdown
+<<<<<<< HEAD
 
 # Plot Pie chart
 -----------------
+=======
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
 Create a PIE chart that uses data from your routes /samples/<sample> and /otu to display the top 10 samples.
 
 Use the Sample Value as the values for the PIE chart
@@ -111,9 +118,12 @@ Use the OTU Description as the hovertext for the chart
 Use Plotly.restyle to update the chart whenever a new sample is selecteda
 
 
+<<<<<<< HEAD
 # Plot Bubble chart:
 ---------------------
 
+=======
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
 Create a Bubble Chart that uses data from your routes /samples/<sample> and /otu to plot the Sample Value vs the OTU ID for the selected sample.
 
 Use the OTU IDs for the x values

@@ -1,7 +1,11 @@
 var select = document.getElementById("samples");
 select.length = 0;
 
+<<<<<<< HEAD
 var names_url = "/names"
+=======
+var names_url = "/names"
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
 
 var defaultOption = document.createElement('option');
 defaultOption.text = 'Sample Names';
@@ -20,12 +24,19 @@ Plotly.d3.json(names_url, function(error, response){
         select.appendChild(el);
 }});
 
+<<<<<<< HEAD
 
 
 function optionChanged() {
     var selection = document.getElementById('samples');
     var selValue = selection.value;
     var sample_url = "/samples/" + selValue;
+=======
+function optionChanged() {
+    var selection = document.getElementById('samples');
+    var selValue = selection.value;
+    var sample_url = "/samples/" + selValue;
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
     Plotly.d3.json(sample_url, function(error, response){
         if (error) return console.warn(error);
         var otus = response[0]["otu_ids"];
@@ -43,12 +54,19 @@ function optionChanged() {
     })
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
  function findMetadata() {
     var selection = document.getElementById('samples');
     var selValue = selection.value;
     var metaList = document.getElementById('metadataList');
+<<<<<<< HEAD
     var meta_url = "/metadata/" + selValue;
+=======
+    var meta_url = "/metadata/" + selValue;
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
     Plotly.d3.json(meta_url, function(error, response){
     if (error) return console.warn.apply(error);
     var data = Object.entries(response[0]);
@@ -63,7 +81,11 @@ function optionChanged() {
 function createBubble() {
     var selection = document.getElementById('samples');
     var selValue = selection.value;
+<<<<<<< HEAD
     var sample_url = "/samples/" + selValue;
+=======
+    var sample_url = "/samples/" + selValue;
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
     Plotly.d3.json(sample_url, function(error, response){
         if (error) return console.warn(error);
         var otus = response[0]["otu_ids"];
@@ -96,4 +118,8 @@ function createBubble() {
         Plotly.newPlot('bubblePlot', data, layout);
     })
 };
+<<<<<<< HEAD
  
+=======
+ 
+>>>>>>> 89d991db68b36c4c656a6e08193f1d78765934af
