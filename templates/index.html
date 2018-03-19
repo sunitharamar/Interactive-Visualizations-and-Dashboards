@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-md-3" id="dropdown">
                 <p class='lead'>Select a Sample</p>
-                <select id="samples" onchange="optionChanged(); findMetadata(); createBubble()"></select>
+                <select id="samples" onchange="optionChanged(); findMetadata(); buildGauge(); createBubble()"></select>
         </div>
             </div>
     </div>
@@ -31,13 +31,16 @@
     
     <div class = 'container'>
         <div class="row">
-            <div class='col-md-3' id="sampleMetadata">
+            <div class="col-md-2" id="sampleMetadata">
                 <div class="card" style:"width: 18rem" id="smTitle"><p class="lead"><strong>Sample MetaData</p></strong>
                     <div id="list"><ul class="card-text" id="metadataList"></ul></div>
                 </div>
             </div>
-        <div class='col-md-9'>
+        <div class="col-md-8">
             <div class = "responsive-plot" id='plots'></div>
+        </div>
+        <div class="col-md-2">
+            <div id="gauge"></div>
         </div>
     </div>
 </div>
